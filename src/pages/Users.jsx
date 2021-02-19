@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import UserCard from '../components/UserCard';
+import { userActions } from '../store/user/user.actions';
 
 function Users() {
-  const [users, setUsers] = useState([]);
+  const { users } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const response = await fetch('https://reqres.in/api/users');
-        const { data } = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error('ERROR', error);
-      }
-    };
-    getUsers();
-  }, []);
+    dispatch(userActions.getUsers());
+  }, [dispatch]);
 
   const grid = {
     display: 'grid',
@@ -34,7 +28,8 @@ function Users() {
       </Link>
 
       <div style={grid}>
-        {users.length && users.map((user) => <UserCard user={user} />)}
+        {users.length &&
+          users.map((user) => <UserCard user={user} key={user.id} />)}
       </div>
     </>
   );
